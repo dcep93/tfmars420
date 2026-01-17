@@ -55,6 +55,7 @@ const fToString = (fn: (...args: any[]) => any): Promise<string> => {
 //
 
 window.addEventListener("message", (event) => {
+  if (event.data.source === "react-devtools-content-script") return;
   const payload = event.data;
   alert(JSON.stringify(payload));
 });
@@ -69,5 +70,20 @@ function remoteF(
     iFrame.style.height = "10em";
     iFrame.style.border = "0";
     iFrame.hidden = false;
+
+    var createGameStateStr = "";
+    function logInputs() {
+      const createGameState = {
+        checked: Array.from(document.querySelectorAll("input:checked"))
+          .map((e) => e.id)
+          .filter(Boolean),
+      };
+      const checkStr = JSON.stringify(createGameState);
+      if (checkStr !== createGameStateStr) {
+        console.log(createGameState);
+        createGameStateStr = checkStr;
+      }
+    }
+    setInterval(logInputs, 100);
   }
 }
